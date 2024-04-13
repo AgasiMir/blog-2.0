@@ -46,6 +46,7 @@ class Post(models.Model):
         related_name="updater_posts",
     )
     fixed = models.BooleanField(verbose_name='Прикреплено', default=False)
+    views = models.PositiveBigIntegerField(verbose_name='Количество просмотров', default=0)
 
     class Meta:
         db_table = 'blog_post'
