@@ -1,7 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
+
+from apps.services.utils import unique_slugify
 
 
 class Post(models.Model):
@@ -9,7 +12,10 @@ class Post(models.Model):
     Модель постов для нашего блога
     """
 
-    STATUS_OPTIONS = (("published", "Опубликовано"), ("draft", "Черновик"))
+    STATUS_OPTIONS = (
+        ("published", "Опубликовано"),
+        ("draft", "Черновик")
+    )
 
     title = models.CharField(verbose_name="Название записи", max_length=255)
     slug = models.SlugField(verbose_name="URL", max_length=255, blank=True)
@@ -69,6 +75,17 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("post_detail", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):
+        """
+        При сохранении генерируем слаг и проверяем на уникальность
+        """
+
+        self.slug = unique_slugify(self, self.title, self.slug)
+        super().save(*args, **kwargs)
 
     def correct_views(self):
         if self.views < 1000:

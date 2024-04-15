@@ -3,6 +3,7 @@ from django.db.models import F
 from django.utils.safestring import mark_safe
 from mptt.admin import DraggableMPTTAdmin
 from django_mptt_admin.admin import DjangoMpttAdmin
+from random import randint
 
 from .models import Post, Category
 
@@ -22,7 +23,7 @@ class PostAdmin(admin.ModelAdmin):
     Админ-панель модели статей
     """
 
-    list_display = ["photo", "title", "category", "author", "create"]
+    list_display = ["photo", "title", "category", "author", "create", "views"]
     list_display_links = ["photo", "title"]
     list_filter = ["status", "create", "category", "author"]
     search_fields = ["title", "text", "description"]
@@ -31,8 +32,9 @@ class PostAdmin(admin.ModelAdmin):
     actions = ["boost"]
 
     save_on_top = True
+    exclude = ['slug']
     readonly_fields = ["photo"]
-    prepopulated_fields = {"slug": ("title",)}
+    # prepopulated_fields = {"slug": ("title",)}
 
     @admin.display(description="Изображение")
     def photo(self, post: Post):
@@ -42,5 +44,6 @@ class PostAdmin(admin.ModelAdmin):
 
     @admin.action(description="Больше просмотров")
     def boost(self, request, queryset):
-        post = queryset.update(views=F("views") + 200_000)
-        self.message_user(request, f"Больше просмотров применено к: {post} постам(у))")
+        random_number = randint(5500, 15400)
+        post = queryset.update(views=F("views") + 50_000 + random_number)
+        self.message_user(request, f"Больше просмотров применено к: {post} постам(у)")
