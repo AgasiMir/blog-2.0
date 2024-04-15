@@ -70,6 +70,17 @@ class Post(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    def correct_views(self):
+        if self.views < 1000:
+            return self.views
+        if self.views >= 1000:
+            res = f"{self.views:_}"
+            res = res.replace("_", ".")
+            res = res[: res.index(".") + 2]
+            if res[-1] == "0":
+                return res[:-2] + "K"
+            return res + "K"
+
 
 class Category(MPTTModel):
     """
