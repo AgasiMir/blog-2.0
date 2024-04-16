@@ -9,7 +9,7 @@ class PostListView(ListView):
     # model = Post
     context_object_name = "posts"
     template_name = "blog/post_list.html"
-    paginate_by = 150
+    paginate_by = 8
     queryset = Post.custom.all()
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
@@ -44,7 +44,7 @@ class PostFromCategory(ListView):
     template_name = "blog/post_list.html"
     context_object_name = "posts"
     category = None
-    paginate_by = 5
+    paginate_by = 8
 
     def get_queryset(self):
         self.category = Category.objects.get(slug=self.kwargs["slug"])

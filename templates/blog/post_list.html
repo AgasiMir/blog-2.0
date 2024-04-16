@@ -9,6 +9,7 @@
             <div class="row">
                 <div class="col-4">
                     <img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}">
+                    <p> 👀: {{ post.correct_views }}</p>
                 </div>
                 <div class="col-8">
                     <div class="card-body">
@@ -16,7 +17,7 @@
                             <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
                         </h5>
                         <p class="card-text">{{ post.description }}</p>
-                        <small>Добавил {{ post.author.username }}, {{ post.create }} 👀: {{ post.correct_views }}</small>
+                        <small>Добавил {{ post.author.username }}, {{ post.create }}</small>
                         <a href="{{ post.category.get_absolute_url }}">{{ post.category.title }}</a>
                     </div>
                 </div>
