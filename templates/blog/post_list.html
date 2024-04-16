@@ -2,10 +2,10 @@
 
 {% block content %}
     {% for post in posts %}
-        {% comment %} <div>
-        <hr>
-        <br> {% endcomment %}
-        <div class="card mb-3">
+        <div>
+ 
+        <br> 
+        {% comment %} <div class="card mb-3"> {% endcomment %}
             <div class="row">
                 <div class="col-4">
                     <img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}">
@@ -17,9 +17,11 @@
                         </h5>
                         <p class="card-text">{{ post.description }}</p>
                         <small>Добавил {{ post.author.username }}, {{ post.create }} 👀: {{ post.correct_views }}</small>
+                        <a href="{{ post.category.get_absolute_url }}">{{ post.category.title }}</a>
                     </div>
                 </div>
             </div>
         </div>
+        <hr>
     {% endfor %}
 {% endblock %}

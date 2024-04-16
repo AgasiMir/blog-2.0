@@ -1,9 +1,9 @@
+from random import randint
 from django.contrib import admin
 from django.db.models import F
 from django.utils.safestring import mark_safe
 from mptt.admin import DraggableMPTTAdmin
 from django_mptt_admin.admin import DjangoMpttAdmin
-from random import randint
 
 from .models import Post, Category
 
