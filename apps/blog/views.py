@@ -6,10 +6,11 @@ from apps.blog.models import Post, Category
 
 
 class PostListView(ListView):
-    model = Post
+    # model = Post
     context_object_name = "posts"
     template_name = "blog/post_list.html"
-    paginate_by = 5
+    paginate_by = 150
+    queryset = Post.custom.all()
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -47,10 +48,10 @@ class PostFromCategory(ListView):
 
     def get_queryset(self):
         self.category = Category.objects.get(slug=self.kwargs["slug"])
-        queryset = Post.objects.filter(category__slug=self.category.slug)
+        queryset = Post.custom.filter(category__slug=self.category.slug)
         if not queryset:
             sub_cat = Category.objects.filter(parent=self.category)
-            queryset = Post.objects.filter(category__in=sub_cat)
+            queryset = Post.custom.filter(category__in=sub_cat)
         return queryset
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:

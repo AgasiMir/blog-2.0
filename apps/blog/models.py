@@ -4,7 +4,16 @@ from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
+
 from apps.services.utils import unique_slugify
+
+
+class PostManager(models.Manager):
+    """
+    Кастомный менеджер для модели постов
+    """
+    def get_queryset(self):
+        return super().get_queryset().select_related('category', 'author').filter(status='published')
 
 
 class Post(models.Model):
@@ -66,6 +75,9 @@ class Post(models.Model):
         verbose_name="Количество просмотров", default=0
     )
 
+    objects = models.Manager()
+    custom = PostManager()
+
     class Meta:
         db_table = "blog_post"
         ordering = ["-fixed", "-create"]
@@ -84,7 +96,8 @@ class Post(models.Model):
         При сохранении генерируем слаг и проверяем на уникальность
         """
 
-        self.slug = unique_slugify(self, self.title, self.slug)
+        if not self.slug:
+            self.slug = unique_slugify(self, self.title, self.slug)
         super().save(*args, **kwargs)
 
     def correct_views(self):
