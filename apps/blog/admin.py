@@ -32,14 +32,20 @@ class PostAdmin(admin.ModelAdmin):
     actions = ["boost"]
 
     save_on_top = True
-    exclude = ['slug']
-    readonly_fields = ["photo"]
+    exclude = ["slug"]
+    readonly_fields = ["photo_detail"]
     # prepopulated_fields = {"slug": ("title",)}
 
     @admin.display(description="Изображение")
     def photo(self, post: Post):
         if post.thumbnail:
             return mark_safe(f"<img src='{post.thumbnail.url}' width=120>")
+        return "Нет изображения"
+
+    @admin.display(description="Изображение Поста")
+    def photo_detail(self, post: Post):
+        if post.thumbnail:
+            return mark_safe(f"<img src='{post.thumbnail.url}' width=220>")
         return "Нет изображения"
 
     @admin.action(description="Больше просмотров")

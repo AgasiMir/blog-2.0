@@ -3,12 +3,10 @@ from unidecode import unidecode
 from django.utils.text import slugify
 
 
-def unique_slugify(instance, title=None, slug=None):
+def unique_slugify(instance, title):
     """
     Генератор уникальных SLUG для моделей, в случае существования такого SLUG.
     """
-    if slug:
-        return slug
 
     model = instance.__class__
     unique_slug = slugify(unidecode(title))
