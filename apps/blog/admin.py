@@ -33,6 +33,19 @@ class PostAdmin(admin.ModelAdmin):
 
     save_on_top = True
     exclude = ["slug"]
+    fields = [
+        "photo_detail",
+        "title",
+        "description",
+        "text",
+        "category",
+        "thumbnail",
+        "status",
+        "author",
+        "updater",
+        "fixed",
+        "views",
+    ]
     readonly_fields = ["photo_detail"]
     # prepopulated_fields = {"slug": ("title",)}
 
@@ -45,7 +58,7 @@ class PostAdmin(admin.ModelAdmin):
     @admin.display(description="Изображение Поста")
     def photo_detail(self, post: Post):
         if post.thumbnail:
-            return mark_safe(f"<img src='{post.thumbnail.url}' width=220>")
+            return mark_safe(f"<img src='{post.thumbnail.url}' width=400>")
         return "Нет изображения"
 
     @admin.action(description="Больше просмотров")
