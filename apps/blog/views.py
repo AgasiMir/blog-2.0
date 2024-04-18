@@ -1,4 +1,5 @@
 from typing import Dict, Any
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView
 
@@ -60,3 +61,23 @@ class PostFromCategory(ListView):
         page = context['page_obj']
         context['paginator_range'] = page.paginator.get_elided_page_range(page.number, on_each_side=2, on_ends=1)
         return context
+
+
+class PostsByAuthorView(ListView):
+    """
+    Статьи по авторам
+    """
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+    paginate_by = 8
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        author = get_user_model().objects.get(slug=self.kwargs['slug'])
+        context['title'] = f"Статьи автора {author}"
+        page = context['page_obj']
+        context['paginator_range'] = page.paginator.get_elided_page_range(page.number, on_each_side=2, on_ends=1)
+        return context
+
+    def get_queryset(self) :
+        return Post.custom.filter(author__slug=self.kwargs['slug'])

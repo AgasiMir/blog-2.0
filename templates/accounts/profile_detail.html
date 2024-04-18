@@ -1,0 +1,45 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="card border-0">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <figure>
+                        <img src="{{ profile.avatar.url }}" class="img-fluid rounded-0" alt="{{ profile }}">
+                    </figure>
+                </div>
+                <div class="col-md-9">
+                     <h5 class="card-title">
+                        {{ profile }}
+                    </h5>
+                    <div class="card-text">
+                        <ul>
+                            <li>Никнейм: {{ profile.username }}</li>
+                            {% if profile.get_full_name %} <li>Имя и фамилия: {{ profile.get_full_name }}</li> {% endif %}
+                            <li>Заходил: {{ profile.last_login }}</li>
+                            <li>Дата рождения: {{ profile.birth_date }}</li>
+                            <li>О себе: {{ profile.bio }}</li>
+                        </ul>
+                    {% if request.user == profile %} <a href="{% url 'profile_edit' %}" class="btn btn-sm btn-primary">Редактировать профиль</a> {% endif %}
+                    </div>
+                </div>
+            </div>
+            <br>
+            <hr>
+            {% if posts %}
+                <p>Статей написано автором: {{ count }}</p>
+                {% for post in posts %}
+                    <ul>
+                        <li>
+                            <a href="{{post.get_absolute_url}}"><img src="{{post.thumbnail.url}}" width=15% alt=""></a>
+                            <a href="{{post.get_absolute_url}}">{{ post.title }}</a>
+                        </li>
+                        <hr>
+                    </ul>
+                {% endfor %}
+            {% endif %}
+            <a href="{% url 'posts_by_author' profile.slug %}" class="btn btn-sm btn-primary"> Все статьи автора </a>
+        </div>
+    </div>
+{% endblock %}

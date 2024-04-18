@@ -1,8 +1,9 @@
+from datetime import date
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms import ValidationError
 
-from datetime import date
 
 
 UPDATE_FORM_WIDGET = forms.TextInput(attrs={"class": "form-control mb-1"})
@@ -28,7 +29,7 @@ class UserUpdateForm(forms.ModelForm):
         Форма обновления данных пользователя
         """
         email = self.cleaned_data.get("email")
-        username = self.cleaned_data.get("usernmae")
+        username = self.cleaned_data.get("username")
         if (
             email
             and get_user_model()
