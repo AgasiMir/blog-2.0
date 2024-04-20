@@ -1,9 +1,10 @@
 from typing import Dict, Any
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
-from django.views.generic import ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView
 
 from apps.blog.models import Post, Category
+from apps.blog.forms import PostCreateForm
 
 
 class PostListView(ListView):
@@ -81,3 +82,13 @@ class PostsByAuthorView(ListView):
 
     def get_queryset(self) :
         return Post.custom.filter(author__slug=self.kwargs['slug'])
+
+
+class PostCreateView(CreateView):
+    template_name = 'blog/post_create.html'
+    form_class = PostCreateForm
+    extra_context = {'title': 'Добавление статьи на сайт'}
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)

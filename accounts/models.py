@@ -33,4 +33,4 @@ class Profile(AbstractUser):
         return self.username
 
     def get_absolute_url(self):
-        return reverse("profile_detail", kwargs={"slug": self.slgu})
+        return reverse("profile_detail", kwargs={"slug": self.slug})
