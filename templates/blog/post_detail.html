@@ -9,4 +9,9 @@
         <small>{{ post.correct_views }}</small>
         <hr>
         <span>{{ post.category.title }}</span>
+        <hr>
+        {% if post.author == request.user  %}
+                <a href="{% url "post_update" post.slug %}" class="btn btn-dark">Редактировать пост</a>
+        {% endif %}
 {% endblock %}
+{% url "" %}

@@ -98,8 +98,10 @@ class PostUpdateView(UpdateView):
     template_name = 'blog/post_update.html'
     form_class = PostCreateForm
     context_object_name = 'post'
+    model = Post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = f"Обновление статьи {context['post'].tile}"
+        context['title'] = f"Обновление статьи {context['post'].title}"
+        # context['title'] = f'Обновление статьи: {self.object.title}'
         return context
