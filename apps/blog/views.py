@@ -1,7 +1,7 @@
 from typing import Dict, Any
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView
 
 from apps.blog.models import Post, Category
 from apps.blog.forms import PostCreateForm
@@ -92,3 +92,14 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+class PostUpdateView(UpdateView):
+    template_name = 'blog/post_update.html'
+    form_class = PostCreateForm
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f"Обновление статьи {context['post'].tile}"
+        return context
