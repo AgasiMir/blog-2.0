@@ -2,28 +2,35 @@ from typing import Dict, Any
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 
 from apps.blog.models import Post, Category
 from apps.blog.forms import PostCreateForm
+from ..services.mixins import AuthorRequiredMixin
 
 
-class PostListView(ListView):
-    # model = Post
-    context_object_name = "posts"
+class PaginationMixin:
     template_name = "blog/post_list.html"
+    context_object_name = 'posts'
     paginate_by = 8
-    queryset = Post.custom.all()
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Главная страница"
+    def get_mixin_context(self, context):
         page = context['page_obj']
         context['paginator_range'] = page.paginator.get_elided_page_range(page.number, on_each_side=2, on_ends=1)
         return context
 
 
+class PostListView(PaginationMixin, ListView):
+    queryset = Post.custom.all()
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Главная страница"
+        return self.get_mixin_context(context)
+
+
 class PostDetailView(DetailView):
-    # model = Post
     template_name = "blog/post_detail.html"
     context_object_name = "post"
 
@@ -42,11 +49,8 @@ class PostDetailView(DetailView):
         return post
 
 
-class PostFromCategory(ListView):
-    template_name = "blog/post_list.html"
-    context_object_name = "posts"
+class PostFromCategory(PaginationMixin, ListView):
     category = None
-    paginate_by = 8
 
     def get_queryset(self):
         self.category = Category.objects.get(slug=self.kwargs["slug"])
@@ -59,46 +63,43 @@ class PostFromCategory(ListView):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["title"] = f"Записи из категории: {self.category.title}"
-        page = context['page_obj']
-        context['paginator_range'] = page.paginator.get_elided_page_range(page.number, on_each_side=2, on_ends=1)
-        return context
+        return self.get_mixin_context(context)
 
 
-class PostsByAuthorView(ListView):
+class PostsByAuthorView(PaginationMixin, ListView):
     """
     Статьи по авторам
     """
-    template_name = 'blog/post_list.html'
-    context_object_name = 'posts'
-    paginate_by = 8
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         author = get_user_model().objects.get(slug=self.kwargs['slug'])
         context['title'] = f"Статьи автора {author}"
-        page = context['page_obj']
-        context['paginator_range'] = page.paginator.get_elided_page_range(page.number, on_each_side=2, on_ends=1)
-        return context
+        return self.get_mixin_context(context)
 
     def get_queryset(self) :
         return Post.custom.filter(author__slug=self.kwargs['slug'])
 
 
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'blog/post_create.html'
     form_class = PostCreateForm
     extra_context = {'title': 'Добавление статьи на сайт'}
+    login_url = 'home'
+    success_message = 'Запись была успешно добавлена!'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(AuthorRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Post
     template_name = 'blog/post_update.html'
     form_class = PostCreateForm
     context_object_name = 'post'
-    model = Post
+    login_url = 'home'
+    success_message = 'Запись была успешно обновлена!'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
