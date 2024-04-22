@@ -1,14 +1,19 @@
 {% extends 'main.html' %}
 
 {% block content %}
+    <form method="get">
+        <p>Постов на странице</p>
+        <button name='8' class="btn btn-sm btn-primary">8</button>
+        <button name='12' class="btn btn-sm btn-primary">12</button>
+    </form>
+
     {% for post in posts %}
         <div>
- 
         <br> 
         {% comment %} <div class="card mb-3"> {% endcomment %}
             <div class="row">
                 <div class="col-4">
-                    <img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}">
+                    <a href="{{ post.get_absolute_url }}"><img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}"></a>
                     <p> 👀: {{ post.correct_views }}</p>
                 </div>
                 <div class="col-8">

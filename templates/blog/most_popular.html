@@ -1,0 +1,11 @@
+<h6>Самые популярные</h6>
+<hr>
+{% for post in posts  %}
+    <ul>
+        
+            <a href="{{ post.get_absolute_url }}"><img src="{{post.thumbnail.url}}" width=25% alt=""></a> 
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        
+    </ul>
+{% endfor %}
+<hr>

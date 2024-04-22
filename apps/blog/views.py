@@ -13,11 +13,36 @@ from ..services.mixins import AuthorRequiredMixin
 class PaginationMixin:
     template_name = "blog/post_list.html"
     context_object_name = 'posts'
-    paginate_by = 8
+    sym = ''
+
+    def get_paginate_by(self, queryset):
+        if '12' in self.request.GET:
+            self.__class__.sym += 'X'
+            if len(self.__class__.sym) > 1:
+                self.__class__.sym = self.__class__.sym[-1]
+
+        if '8' in self.request.GET:
+            self.__class__.sym += 'Y'
+            if len(self.__class__.sym) > 1:
+                self.__class__.sym = self.__class__.sym[-1]
+
+        try:
+            if self.__class__.sym[-1] == 'X':
+                self.paginate_by = 12
+            elif self.__class__.sym[-1] == 'Y':
+                self.paginate_by = 8
+        except IndexError:
+            self.paginate_by = 8
+
+        return self.paginate_by
 
     def get_mixin_context(self, context):
         page = context['page_obj']
-        context['paginator_range'] = page.paginator.get_elided_page_range(page.number, on_each_side=2, on_ends=1)
+        context['paginator_range'] = page.paginator.get_elided_page_range(
+            page.number,
+            on_each_side=2,
+            on_ends=1
+        )
         return context
 
 
@@ -27,6 +52,7 @@ class PostListView(PaginationMixin, ListView):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["title"] = "Главная страница"
+
         return self.get_mixin_context(context)
 
 
@@ -41,7 +67,8 @@ class PostDetailView(DetailView):
         return context
 
     def get_object(self, queryset=None):
-        post = get_object_or_404(Post, slug=self.kwargs["slug"])
+        # post = get_object_or_404(Post, slug=self.kwargs["slug"])
+        post = Post.custom.get(slug=self.kwargs['slug'])    #такой запрос лучше оптимизирован
 
         post.views += 1
         post.save()
