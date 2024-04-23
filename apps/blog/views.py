@@ -13,23 +13,22 @@ from ..services.mixins import AuthorRequiredMixin
 class PaginationMixin:
     template_name = "blog/post_list.html"
     context_object_name = 'posts'
-    sym = ''
+    symbol = ''
 
     def get_paginate_by(self, queryset):
         if '12' in self.request.GET:
-            self.__class__.sym += 'X'
-            if len(self.__class__.sym) > 1:
-                self.__class__.sym = self.__class__.sym[-1]
+            self.__class__.symbol += 'X'
 
         if '8' in self.request.GET:
-            self.__class__.sym += 'Y'
-            if len(self.__class__.sym) > 1:
-                self.__class__.sym = self.__class__.sym[-1]
+            self.__class__.symbol += 'Y'
+
+        if len(self.__class__.symbol) > 10:
+            self.__class__.symbol = self.__class__.symbol[-1]
 
         try:
-            if self.__class__.sym[-1] == 'X':
+            if self.__class__.symbol[-1] == 'X':
                 self.paginate_by = 12
-            elif self.__class__.sym[-1] == 'Y':
+            elif self.__class__.symbol[-1] == 'Y':
                 self.paginate_by = 8
         except IndexError:
             self.paginate_by = 8
