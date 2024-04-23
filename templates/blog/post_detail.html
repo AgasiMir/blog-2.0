@@ -1,6 +1,6 @@
 {% extends 'main.html' %}
 
-{% block content %}
+{% comment %} {% block content %}
         <img src={{ post.thumbnail.url }} alt={{ post.title }} width="250"/>
         <strong>{{ post.title }}</strong>
         <p>{{ post.description }}</p>
@@ -13,5 +13,42 @@
         {% if post.author == request.user or request.user.is_staff %}
                 <a href="{% url "post_update" post.slug %}" class="btn btn-dark">Редактировать пост</a>
         {% endif %}
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} -------- {% endcomment %}
+
+
+{% load mptt_tags %}
+{% load static %}
+{% block content %}
+<div>
+    <div class="row">
+        <div class="col-12">
+            <img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}" />
+        </div>
+        <div class="col-12">
+            <div class="card-body">
+                <h4>{{ post.title }}</h4>
+                <h6 class="card-text">{{ post.description }}</h6>
+                <p class="card-text">{{ post.text }}</p>
+                Категория: <a href="{% url 'post_by_category' post.category.slug %}">{{ post.category.title }}</a> / Добавил: <a href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a> / <small>{{ post.create|date:'d F Y'}}</small>
+                <small style='margin-left:320px'>👀: {{ post.correct_views}}</small>
+                </div>
+                <hr>
+                {% if post.author == request.user or request.user.is_staff %}
+                        <a href="{% url "post_update" post.slug %}" class="btn btn-dark">Редактировать пост</a>
+                {% endif %}
+        </div>
+    </div>
+</div>
+{% comment %} <div class="card border-0">
+    <div class="card-body">
+        <h5 class="card-title">
+            Комментарии
+        </h5>
+        {% include 'blog/comments/comments_list.html' %}
+    </div>
+</div> {% endcomment %}
 {% endblock %}
-{% url "" %}

@@ -14,7 +14,6 @@
             <div class="row">
                 <div class="col-4">
                     <a href="{{ post.get_absolute_url }}"><img src="{{ post.thumbnail.url }}" class="card-img-top" alt="{{ post.title }}"></a>
-                    <p> 👀: {{ post.correct_views }}</p>
                 </div>
                 <div class="col-8">
                     <div class="card-body">
@@ -24,6 +23,7 @@
                         <p class="card-text">{{ post.description }}</p>
                         <small>Добавил <a href="{{post.author.get_absolute_url}}">{{ post.author.username }}</a>, {{ post.create }}</small>
                         <a href="{{ post.category.get_absolute_url }}">{{ post.category.title }}</a>
+                        <small style='margin-left:80px'> 👀: {{ post.correct_views }}</small>
                     </div>
                 </div>
             </div>
