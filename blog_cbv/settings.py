@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-from django.conf.global_settings import AUTH_USER_MODEL, MEDIA_ROOT, MEDIA_URL, STATIC_ROOT
+from django.conf.global_settings import AUTH_USER_MODEL, AUTHENTICATION_BACKENDS, MEDIA_ROOT, MEDIA_URL, STATIC_ROOT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,6 +83,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'blog_cbv.wsgi.application'
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.authentication.EmailAuthBackend'
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

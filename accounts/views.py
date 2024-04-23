@@ -1,12 +1,14 @@
 from typing import Any, Dict
 from django.contrib.auth import get_user_model
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
 from django.urls import reverse_lazy
 
 from apps.blog.models import Post
 
-from .forms import UserUpdateForm, ProfileUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, UserCreationForm, UserLoginForm
 
 
 class ProfileDetailView(DetailView):
@@ -24,6 +26,7 @@ class ProfileDetailView(DetailView):
         context['posts'] = posts[:5]
         context['count'] = len(posts)
         return context
+
 
 class ProfileUpdateView(UpdateView):
     """
@@ -59,3 +62,32 @@ class ProfileUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('profile_detail', kwargs={'slug': self.object.slug})
+
+
+class UserRegisterView(SuccessMessageMixin, CreateView):
+    """
+    Представление регистрации на сайте с формой регистрации
+    """
+    form_class = UserRegisterForm
+    template_name = 'accounts/user_register.html'
+    success_message = 'Вы успешно зарегистрировались. Можете войти на сайт!'
+    success_url = reverse_lazy('home')
+    extra_context = {'title': 'Регистрация на сайте'}
+
+
+class UserLoginView(SuccessMessageMixin, LoginView):
+    form_class = UserLoginForm
+    template_name = 'accounts/user_login.html'
+    next_page = 'home'
+    success_message = "Добро пожаловать на сайт, %(res)s!"
+    extra_context = {'title': 'Авторизация на сайте'}
+
+    def get_success_message(self, cleaned_data: Dict[str, str]) -> str:
+        return self.success_message % dict(cleaned_data, res=self.request.user)
+
+
+class UserLogoutView(LogoutView):
+    """
+    Выход с сайта
+    """
+    next_page = 'home'

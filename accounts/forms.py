@@ -2,6 +2,7 @@ from datetime import date
 
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import ValidationError
 
 
@@ -62,3 +63,58 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ['bio', 'birth_date', 'avatar']
+
+
+class UserRegisterForm(UserCreationForm):
+    """
+    Переопределенная форма регистрации пользователей
+    """
+
+    class Meta(UserCreationForm.Meta):
+        model = get_user_model()
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
+
+    def clean_email(self):
+        """
+        Проверка email на уникальность
+        """
+        email = self.cleaned_data.get('email')
+        username = self.cleaned_data.get('username')
+        if email and get_user_model().objects.filter(email=email).exclude(username=username).exists():
+            raise forms.ValidationError('Такой email уже используется в системе')
+        return email
+
+    
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы регистрации
+        """
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({"placeholder": "Придумайте свой логин"})
+        self.fields['email'].widget.attrs.update({"placeholder": "Введите свой email"})
+        self.fields['first_name'].widget.attrs.update({"placeholder": "Ваше имя"})
+        self.fields['last_name'].widget.attrs.update({"placeholder": "Ваша фамилия"})
+        self.fields['password1'].widget.attrs.update({"placeholder": "Придумайте свой пароль"})
+        self.fields['password2'].widget.attrs.update({"placeholder": "Повторите придуманный пароль"})
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
+
+
+class UserLoginForm(AuthenticationForm):
+    """
+    Форма авторизации на сайте
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы авторизации
+        """
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['placeholder'] = 'Логин пользователя'
+        self.fields['password'].widget.attrs['placeholder'] = 'Пароль пользователя'
+        self.fields['username'].label = 'Логин или Email'
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+                'autocomplete': 'off'
+            })
