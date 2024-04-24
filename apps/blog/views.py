@@ -1,5 +1,6 @@
 from typing import Dict, Any
 from django.contrib.auth import get_user_model
+from django.db.models import F
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import CreateView, ListView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,7 +14,7 @@ from ..services.mixins import AuthorRequiredMixin
 class PaginationMixin:
     template_name = "blog/post_list.html"
     context_object_name = 'posts'
-    symbol = ''
+    symbol = 'Y'
 
     def get_paginate_by(self, queryset):
         if '12' in self.request.GET:
@@ -25,12 +26,10 @@ class PaginationMixin:
         if len(self.__class__.symbol) > 10:
             self.__class__.symbol = self.__class__.symbol[-1]
 
-        try:
-            if self.__class__.symbol[-1] == 'X':
-                self.paginate_by = 12
-            elif self.__class__.symbol[-1] == 'Y':
-                self.paginate_by = 8
-        except IndexError:
+
+        if self.__class__.symbol[-1] == 'X':
+            self.paginate_by = 12
+        elif self.__class__.symbol[-1] == 'Y':
             self.paginate_by = 8
 
         return self.paginate_by

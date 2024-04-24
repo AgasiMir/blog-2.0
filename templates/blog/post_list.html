@@ -23,7 +23,7 @@
                         <p class="card-text">{{ post.description }}</p>
                         <small>Добавил <a href="{{post.author.get_absolute_url}}">{{ post.author.username }}</a>, {{ post.create }}</small>
                         <a href="{{ post.category.get_absolute_url }}">{{ post.category.title }}</a>
-                        <small style='margin-left:80px'> 👀: {{ post.correct_views }}</small>
+                        <small style='margin-left:40px'> 👀: {{ post.correct_views }}</small>
                     </div>
                 </div>
             </div>
