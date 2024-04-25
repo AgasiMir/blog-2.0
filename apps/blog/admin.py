@@ -9,6 +9,12 @@ from django_summernote.admin import SummernoteModelAdmin
 from .models import Post, Category, Comment
 
 
+class CommentInLine(admin.StackedInline):
+    model = Comment
+    extra = 0
+    readonly_fields = ['content', 'author', 'parent']
+
+
 @admin.register(Category)
 class CategoryAdmin(DjangoMpttAdmin):
     """
@@ -48,6 +54,7 @@ class PostAdmin(SummernoteModelAdmin):
         "views",
     ]
     readonly_fields = ["photo_detail"]
+    inlines = [CommentInLine]
     # prepopulated_fields = {"slug": ("title",)}
 
     @admin.display(description="Изображение")
