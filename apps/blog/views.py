@@ -11,6 +11,7 @@ from apps.blog.forms import PostCreateForm
 from ..services.mixins import AuthorRequiredMixin
 
 
+
 class PaginationMixin:
     template_name = "blog/post_list.html"
     context_object_name = 'posts'
@@ -58,10 +59,12 @@ class PostDetailView(DetailView):
     template_name = "blog/post_detail.html"
     context_object_name = "post"
 
+
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         # context['title'] = context['post'].title
         context["title"] = self.object.title
+        # context['views'] = Post.custom.filter(slug=self.kwargs['slug']).update(views=F('views') + 1)
         return context
 
     def get_object(self, queryset=None):

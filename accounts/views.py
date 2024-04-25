@@ -71,7 +71,7 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
     form_class = UserRegisterForm
     template_name = 'accounts/user_register.html'
     success_message = 'Вы успешно зарегистрировались. Можете войти на сайт!'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('login')
     extra_context = {'title': 'Регистрация на сайте'}
 
 
