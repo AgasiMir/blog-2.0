@@ -19,3 +19,8 @@ def most_commented():
         .order_by("-total")[:5]
     )
     return {"posts": posts}
+
+@register.inclusion_tag('blog/latest_comments.html')
+def latest_comments():
+    comments = Comment.objects.order_by('-time_create')[:3]
+    return {'comments': comments}

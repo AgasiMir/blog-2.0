@@ -1,0 +1,9 @@
+{% for comment in comments  %}
+    <ul>
+        
+            <a href="{{ comment.post.get_absolute_url }}"><img src="{{comment.author.avatar.url}}" width=15% alt=""></a> 
+            <a href="{{ comment.post.get_absolute_url }}">{{ comment.content }}</a>
+        
+    </ul>
+{% endfor %}
+<hr>
