@@ -6,7 +6,7 @@ from mptt.admin import DraggableMPTTAdmin
 from django_mptt_admin.admin import DjangoMpttAdmin
 from django_summernote.admin import SummernoteModelAdmin
 
-from .models import Post, Category
+from .models import Post, Category, Comment
 
 
 @admin.register(Category)
@@ -67,3 +67,11 @@ class PostAdmin(SummernoteModelAdmin):
         random_number = randint(5500, 15400)
         post = queryset.update(views=F("views") + 50_000 + random_number)
         self.message_user(request, f"Больше просмотров применено к: {post} постам(у)")
+
+
+@admin.register(Comment)
+class CommentAdmin(DraggableMPTTAdmin):
+    """
+    Админ-панель модели комментариев
+    """
+    list_display = ['post', 'indented_title']

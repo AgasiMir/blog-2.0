@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-from django.conf.global_settings import AUTH_USER_MODEL, AUTHENTICATION_BACKENDS, MEDIA_ROOT, MEDIA_URL, STATIC_ROOT
+from django.conf.global_settings import AUTH_USER_MODEL, AUTHENTICATION_BACKENDS, MEDIA_ROOT, MEDIA_URL, STATIC_ROOT, STATICFILES_DIRS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -136,6 +136,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [BASE_DIR / 'templates/js/']
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'

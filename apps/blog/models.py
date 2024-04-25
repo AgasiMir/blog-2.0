@@ -12,8 +12,23 @@ class PostManager(models.Manager):
     """
     Кастомный менеджер для модели постов
     """
+
     def get_queryset(self):
-        return super().get_queryset().select_related('category', 'author').filter(status='published')
+        return (
+            super()
+            .get_queryset()
+            .select_related("category", "author")
+            .filter(status="published")
+        )
+
+
+class CommentManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("author", "post")
+        )
 
 
 class Post(models.Model):
@@ -21,10 +36,7 @@ class Post(models.Model):
     Модель постов для нашего блога
     """
 
-    STATUS_OPTIONS = (
-        ("published", "Опубликовано"),
-        ("draft", "Черновик")
-    )
+    STATUS_OPTIONS = (("published", "Опубликовано"), ("draft", "Черновик"))
 
     title = models.CharField(verbose_name="Название записи", max_length=255)
     slug = models.SlugField(verbose_name="URL", max_length=255, blank=True)
@@ -147,10 +159,67 @@ class Category(MPTTModel):
         db_table = "app_categories"
 
     def get_absolute_url(self):
-        return reverse('post_by_category', kwargs={'slug': self.slug})
+        return reverse("post_by_category", kwargs={"slug": self.slug})
 
     def __str__(self):
         """
         Возвращение заголовка категории
         """
         return self.title
+
+
+class Comment(MPTTModel):
+    """
+    Модель древовидных комментариев
+    """
+
+    STATUS_OPTIONS = (("published", "Опубликовано"), ("draft", "Черновик"))
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, verbose_name="Запись", related_name="comments"
+    )
+    author = models.ForeignKey(
+        get_user_model(),
+        verbose_name="Автор комментария",
+        on_delete=models.CASCADE,
+        related_name="comments_author",
+    )
+    content = models.TextField(verbose_name="Тексе комментария", max_length=3000)
+    time_create = models.DateTimeField(
+        verbose_name="Время добавления", auto_now_add=True
+    )
+    time_update = models.DateTimeField(verbose_name="Время обновления", auto_now=True)
+    status = models.CharField(
+        choices=STATUS_OPTIONS,
+        default="published",
+        verbose_name="Статус поста",
+        max_length=10,
+    )
+    parent = TreeForeignKey(
+        "self",
+        verbose_name="Родительский комментарий",
+        null=True,
+        blank=True,
+        related_name="children",
+        on_delete=models.CASCADE,
+    )
+
+    objects = CommentManager()
+
+    class MPTTMeta:
+        """
+        Сортировка по вложенности
+        """
+
+        order_insertion_by = ("time_create",)
+
+    class Meta:
+        """
+        Сортировка, название модели в админ панели, таблица в данными
+        """
+
+        ordering = ["time_create"]
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+
+    def __str__(self):
+        return f"{self.author}:{self.content}"
