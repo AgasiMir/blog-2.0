@@ -18,9 +18,9 @@
                 <div class="col-8">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                            <a href="{{ post.get_absolute_url }}">{{ post.title|safe }}</a>
                         </h5>
-                        <p class="card-text">{{ post.description }}</p>
+                        <p class="card-text">{{ post.description|safe }}</p>
                         <small>Добавил <a href="{{post.author.get_absolute_url}}">{{ post.author.username }}</a>, {{ post.create }}</small>
                         <a href="{{ post.category.get_absolute_url }}">{{ post.category.title }}</a>
                         <small style='margin-left:40px'> 👀: {{ post.correct_views }}</small>

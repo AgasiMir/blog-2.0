@@ -4,6 +4,7 @@ from django.db.models import F
 from django.utils.safestring import mark_safe
 from mptt.admin import DraggableMPTTAdmin
 from django_mptt_admin.admin import DjangoMpttAdmin
+from django_summernote.admin import SummernoteModelAdmin
 
 from .models import Post, Category
 
@@ -18,7 +19,7 @@ class CategoryAdmin(DjangoMpttAdmin):
 
 
 @admin.register(Post)
-class PostAdmin(admin.ModelAdmin):
+class PostAdmin(SummernoteModelAdmin):
     """
     Админ-панель модели статей
     """
