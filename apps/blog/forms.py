@@ -1,12 +1,13 @@
+from django_summernote.widgets import SummernoteWidget
 from django import forms
 from .models import Post, Comment
-from django_summernote.widgets import SummernoteWidget
 
 class PostCreateForm(forms.ModelForm):
     """
     Форма добавления статей на сайте
     Я также использую данную форму для обновления статей
     """
+    text = forms.CharField(widget=SummernoteWidget())
 
     class Meta:
         model = Post
