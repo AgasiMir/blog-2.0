@@ -4,6 +4,7 @@ from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
+from ckeditor.fields import RichTextField
 
 from apps.services.utils import unique_slugify
 
@@ -41,7 +42,7 @@ class Post(models.Model):
     title = models.CharField(verbose_name="Название записи", max_length=255)
     slug = models.SlugField(verbose_name="URL", max_length=255, blank=True)
     description = models.TextField(verbose_name="Краткое описание", max_length=500)
-    text = models.TextField(verbose_name="Полный текст записи")
+    text = RichTextField(config_name='awesome_ckeditor', verbose_name="Полный текст записи")
     category = TreeForeignKey(
         "Category",
         on_delete=models.PROTECT,

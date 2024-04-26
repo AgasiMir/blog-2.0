@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.blog.urls')),
     path('', include('accounts.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('summernote/', include('django_summernote.urls'))
 ]
 
