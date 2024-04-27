@@ -12,7 +12,7 @@ from .models import Post, Category, Comment
 class CommentInLine(admin.StackedInline):
     model = Comment
     extra = 0
-    readonly_fields = ['content', 'author', 'parent']
+    readonly_fields = ["content", "author", "parent"]
 
 
 @admin.register(Category)
@@ -30,8 +30,16 @@ class PostAdmin(SummernoteModelAdmin):
     Админ-панель модели статей
     """
 
-    list_display = ["photo", "title", "category", "author", "create", "views"]
-    list_display_links = ["photo", "title"]
+    list_display = [
+        "photo",
+        "tr_title",
+        "category",
+        "author",
+        "views",
+        "get_comments_count",
+        "create",
+    ]
+    list_display_links = ["photo", "tr_title"]
     list_filter = ["status", "create", "category", "author"]
     search_fields = ["title", "text", "description", "author__username"]
 
@@ -69,6 +77,14 @@ class PostAdmin(SummernoteModelAdmin):
             return mark_safe(f"<img src='{post.thumbnail.url}' width=400>")
         return "Нет изображения"
 
+    @admin.display(description="Комментариев")
+    def get_comments_count(self, post: Post):
+        return post.comments.count()
+
+    @admin.display(description="Заголовок")
+    def tr_title(self, post: Post):
+        return post.title[:50] + "..." if len(post.title) > 50 else post.title
+
     @admin.action(description="Больше просмотров")
     def boost(self, request, queryset):
         random_number = randint(5500, 15400)
@@ -81,4 +97,5 @@ class CommentAdmin(DraggableMPTTAdmin):
     """
     Админ-панель модели комментариев
     """
-    list_display = ['post', 'indented_title']
+
+    list_display = ["post", "indented_title"]

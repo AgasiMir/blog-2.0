@@ -85,7 +85,7 @@ class Post(models.Model):
     )
     fixed = models.BooleanField(verbose_name="Прикреплено", default=False)
     views = models.PositiveBigIntegerField(
-        verbose_name="Количество просмотров", default=0
+        verbose_name="Просмотров", default=0
     )
 
     objects = models.Manager()
