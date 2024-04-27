@@ -19,6 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+
+handler403 = 'apps.blog.views.tr_handler403' # New
+handler404 = 'apps.blog.views.tr_handler404' # New
+handler500 = 'apps.blog.views.tr_handler500' # New
+
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.blog.urls')),
