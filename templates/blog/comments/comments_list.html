@@ -13,7 +13,7 @@
                         <a href="{{ node.author.get_absolute_url }}">{{ node.author }}</a>
                     </h6>
                     <p class="card-text">
-                        {{ node.content }}
+                        {{ node.content|safe }}
                     </p>
                     <a class="btn btn-sm btn-dark btn-reply" href="#commentForm" data-comment-id="{{ node.pk }}" data-comment-username="{{ node.author }}">Ответить</a>
                     <hr/>

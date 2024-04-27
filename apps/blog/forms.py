@@ -1,13 +1,17 @@
 from django import forms
 from .models import Post, Comment
 
-from ckeditor.widgets import CKEditorWidget
+from django_summernote.widgets import SummernoteWidget
+
+
 
 class PostCreateForm(forms.ModelForm):
     """
     Форма добавления статей на сайте
     Я также использую данную форму для обновления статей
     """
+    text = forms.CharField(widget=SummernoteWidget())
+
     class Meta:
         model = Post
         fields = ["title", "category", "description", "text", "thumbnail"]
@@ -29,7 +33,6 @@ class CommentCreateForm(forms.ModelForm):
     parent = forms.IntegerField(widget=forms.HiddenInput, required=False)
     content = forms.CharField(label='',widget=forms.Textarea(
         attrs={'cols': 30, 'rows': 5, 'placeholder': 'Комментарий', 'class': 'form-control'}))
-   
 
     class Meta:
         model = Comment

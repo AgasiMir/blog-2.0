@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.db.models import TextField
 from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
-from ckeditor.fields import RichTextField
 
 from apps.services.utils import unique_slugify
 
@@ -28,7 +28,7 @@ class CommentManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("author", "post")
+            .select_related("author", "post", 'parent')
         )
 
 
@@ -175,6 +175,7 @@ class Comment(MPTTModel):
     """
 
     STATUS_OPTIONS = (("published", "Опубликовано"), ("draft", "Черновик"))
+
     post = models.ForeignKey(
         Post, on_delete=models.CASCADE, verbose_name="Запись", related_name="comments"
     )
@@ -184,11 +185,14 @@ class Comment(MPTTModel):
         on_delete=models.CASCADE,
         related_name="comments_author",
     )
-    content = models.TextField(verbose_name="Тексе комментария", max_length=3000)
-    time_create = models.DateTimeField(
-        verbose_name="Время добавления", auto_now_add=True
+    content = TextField(
+        verbose_name="Текст комментария",
+        max_length=3000,
     )
-    time_update = models.DateTimeField(verbose_name="Время обновления", auto_now=True)
+    time_create = models.DateTimeField(
+        auto_now_add=True, verbose_name="Время добавления"
+    )
+    time_update = models.DateTimeField(auto_now=True, verbose_name="Время обновления")
     status = models.CharField(
         choices=STATUS_OPTIONS,
         default="published",
@@ -204,6 +208,7 @@ class Comment(MPTTModel):
         on_delete=models.CASCADE,
     )
 
+
     objects = CommentManager()
 
     class MPTTMeta:
@@ -211,11 +216,11 @@ class Comment(MPTTModel):
         Сортировка по вложенности
         """
 
-        order_insertion_by = ("time_create",)
+        order_insertion_by = "time_create"
 
     class Meta:
         """
-        Сортировка, название модели в админ панели, таблица в данными
+        Сортировка, название модели в админ панели
         """
 
         ordering = ["time_create"]

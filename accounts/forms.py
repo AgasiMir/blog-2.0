@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import ValidationError
 
+from django_recaptcha.fields import ReCaptchaField
+
 
 
 UPDATE_FORM_WIDGET = forms.TextInput(attrs={"class": "form-control mb-1"})
@@ -104,17 +106,19 @@ class UserLoginForm(AuthenticationForm):
     """
     Форма авторизации на сайте
     """
+    recaptcha = ReCaptchaField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'password', 'recaptcha']
 
     def __init__(self, *args, **kwargs):
         """
-        Обновление стилей формы авторизации
+        Обновление стилей формы регистрации
         """
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['placeholder'] = 'Логин пользователя'
+        self.fields['username'].widget.attrs['class'] = 'form-control'
         self.fields['password'].widget.attrs['placeholder'] = 'Пароль пользователя'
-        self.fields['username'].label = 'Логин или Email'
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control',
-                'autocomplete': 'off'
-            })
+        self.fields['password'].widget.attrs['class'] = 'form-control'
+        self.fields['username'].label = 'Логин'

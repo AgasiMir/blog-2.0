@@ -33,7 +33,7 @@ class PostAdmin(SummernoteModelAdmin):
     list_display = ["photo", "title", "category", "author", "create", "views"]
     list_display_links = ["photo", "title"]
     list_filter = ["status", "create", "category", "author"]
-    search_fields = ["title", "text", "description"]
+    search_fields = ["title", "text", "description", "author__username"]
 
     list_per_page = 10
     actions = ["boost"]

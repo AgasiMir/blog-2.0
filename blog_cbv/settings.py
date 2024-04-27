@@ -10,9 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 from django.conf.global_settings import AUTH_USER_MODEL, AUTHENTICATION_BACKENDS, MEDIA_ROOT, MEDIA_URL, STATIC_ROOT, STATICFILES_DIRS
+
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3naf)_c)d&f^q%t_1(i1avxigw($6k16wdta#5ivunf_s*55rm'
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -56,8 +60,7 @@ INSTALLED_APPS = [
     'django_mptt_admin',
     # 'debug_toolbar',
     'django_summernote',
-    'ckeditor_uploader',
-    'ckeditor',
+    'django_recaptcha'
 ]
 
 MIDDLEWARE = [
@@ -99,6 +102,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'accounts.authentication.EmailAuthBackend'
 ]
+
+
+RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
+RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
