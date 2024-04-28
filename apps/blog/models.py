@@ -19,17 +19,14 @@ class PostManager(models.Manager):
             super()
             .get_queryset()
             .select_related("category", "author")
+            .prefetch_related("ratings")
             .filter(status="published")
         )
 
 
 class CommentManager(models.Manager):
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .select_related("author", "post", 'parent')
-        )
+        return super().get_queryset().select_related("author", "post", "parent")
 
 
 class Post(models.Model):
@@ -84,9 +81,7 @@ class Post(models.Model):
         related_name="updater_posts",
     )
     fixed = models.BooleanField(verbose_name="Прикреплено", default=False)
-    views = models.PositiveBigIntegerField(
-        verbose_name="Просмотров", default=0
-    )
+    views = models.PositiveBigIntegerField(verbose_name="Просмотров", default=0)
 
     objects = models.Manager()
     custom = PostManager()
@@ -123,6 +118,9 @@ class Post(models.Model):
             if res[-1] == "0":
                 return res[:-2] + "K"
             return res + "K"
+
+    def get_sum_rating(self):
+        return sum([rating.value for rating in self.ratings.all()])
 
 
 class Category(MPTTModel):
@@ -208,7 +206,6 @@ class Comment(MPTTModel):
         on_delete=models.CASCADE,
     )
 
-
     objects = CommentManager()
 
     class MPTTMeta:
@@ -229,3 +226,40 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return f"{self.author}:{self.content}"
+
+
+class Rating(models.Model):
+    """
+    Модель рейтинга: Лайк - Дизлайк
+    """
+
+    post = models.ForeignKey(
+        Post,
+        verbose_name="Запись",
+        on_delete=models.CASCADE,
+        related_name="ratings",
+    )
+    user = models.ForeignKey(
+        get_user_model(),
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    value = models.IntegerField(
+        verbose_name="Значение", choices=[(1, "Нравится"), (-1, "Не нравится")]
+    )
+    time_create = models.DateTimeField(
+        verbose_name="Время добавления", auto_now_add=True
+    )
+    ip_address = models.GenericIPAddressField(verbose_name="IP Адрес")
+
+    class Meta:
+        unique_together = ("post", "ip_address")
+        ordering = ["-time_create"]
+        indexes = [models.Index(fields=["-time_create", "value"])]
+        verbose_name = "Рейтинг"
+        verbose_name_plural = "Рейтинги"
+
+    def __str__(self) -> str:
+        return self.post.title

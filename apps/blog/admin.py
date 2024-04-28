@@ -1,6 +1,6 @@
 from random import randint
 from django.contrib import admin
-from django.db.models import F
+from django.db.models import F, Sum
 from django.utils.safestring import mark_safe
 from mptt.admin import DraggableMPTTAdmin
 from django_mptt_admin.admin import DjangoMpttAdmin
@@ -37,6 +37,7 @@ class PostAdmin(SummernoteModelAdmin):
         "author",
         "views",
         "get_comments_count",
+        'show_rating',
         "create",
     ]
     list_display_links = ["photo", "tr_title"]
@@ -84,6 +85,10 @@ class PostAdmin(SummernoteModelAdmin):
     @admin.display(description="Заголовок")
     def tr_title(self, post: Post):
         return post.title[:50] + "..." if len(post.title) > 50 else post.title
+
+    @admin.display(description='Рейтинг')
+    def show_rating(self, post: Post):
+        return post.ratings.aggregate(Sum('value'))["value__sum"]
 
     @admin.action(description="Больше просмотров")
     def boost(self, request, queryset):

@@ -1,6 +1,7 @@
 {% extends 'main.html' %}
 
 {% block content %}
+    {% load static %}
     <form method="get">
         <p>Постов на странице</p>
         <button name='8' class="btn btn-sm btn-primary">8</button>
@@ -32,8 +33,16 @@
                         <small style='margin-left:250px'> 👀: {{ post.correct_views }}</small>
                     </div>
                 </div>
+                <div class="rating-buttons">
+                    <button class="btn btn-sm btn-primary" data-post="{{ post.id }}" data-value="1">Лайк</button>
+                    <button class="btn btn-sm btn-secondary" data-post="{{ post.id }}" data-value="-1">Дизлайк
+                    </button>
+                    <button class="btn btn-sm btn-secondary rating-sum">{{ post.get_sum_rating }}</button>
+                </div>
             </div>
         </div>
         <hr>
     {% endfor %}
+    <script src="{% static 'ratings.js' %}"></script>
+    {% block script %}{% endblock %}
 {% endblock %}
