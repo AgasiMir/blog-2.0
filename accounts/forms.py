@@ -86,7 +86,6 @@ class UserRegisterForm(UserCreationForm):
             raise forms.ValidationError('Такой email уже используется в системе')
         return email
 
-    
     def __init__(self, *args, **kwargs):
         """
         Обновление стилей формы регистрации
