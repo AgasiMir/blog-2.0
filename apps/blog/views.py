@@ -26,9 +26,7 @@ class PaginationMixin:
         if '8' in self.request.GET:
             self.__class__.items = 8
 
-        self.paginate_by = self.__class__.items
-
-        return self.paginate_by
+        return self.__class__.items
 
     def get_mixin_context(self, context):
         page = context['page_obj']
